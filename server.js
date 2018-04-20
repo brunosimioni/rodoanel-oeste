@@ -11,25 +11,26 @@ function checkAlert() {
   unirest.get('http://www.rodoaneloeste.com.br/generic/home/ListOccurrences?abc&_=1524247552871')
   .headers({'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'})
   .end(function (response) {
-    console.log("analysing alerts...");
     checkProblems(response.body);
   });
 }
 
 function checkProblems(occurences) {
   var events = occurences.Occurences;
+  console.log(events.length + " events happening...");
   for (var i in events) {
     var e = events[i];
-    console.log("analysing event...");
-    if (e.OccurrenceTypeCssClass != 'green')
+    console.log("analysing event " + i + " class: " + e.OccurrenceTypeCssClass);
+    if (e.OccurrenceTypeCssClass != 'green' && e.OccurrenceTypeCssClass != 'yellow')
     {
+      if (new Date().getDay() == 0 || new Date().getDay() == 6)
+        return;
       console.log("posting problem...");
-      console.log(e);
       unirest.post(hangoutsChatRoom)
-      .headers({'Content-Type': 'application/json'})
-      .send({ "text": e.Text})
-      .end(function (response) {
-        console.log(response);
+        .headers({'Content-Type': 'application/json'})
+        .send({ "text": e.Text})
+        .end(function (response) {
+          console.log("problem posted.");
       });
     }
   }
