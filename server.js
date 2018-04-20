@@ -1,14 +1,20 @@
 var schedule = require('node-schedule');
 var unirest = require('unirest');
-var hangoutsChatRoom = "https://chat.googleapis.com/v1/spaces/AAAAGepSZ08/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=lE5A54ZWlDlcwvQD1YAg_gzWO81Z5Kl2uoN9mUXeA4g%3D";
+var hangoutsChatRoom = process.env.HANGOUTS_CHAT_ROOM;
+var rodoanelUrl = process.env.RODOANEL_URL;
+var runningFrequency = process.env.RUNNING_FREQ;
 
-var j = schedule.scheduleJob('* * * * *', function(){
+console.log("Hangouts Chat Room: " + hangoutsChatRoom);
+console.log("Rodoanel Url: " + rodoanelUrl);
+console.log("Running Freq: " + runningFrequency);
+
+var j = schedule.scheduleJob(runningFrequency, function(){
   checkAlert();
 });
 
 function checkAlert() {
   console.log("checking alerts...");
-  unirest.get('http://www.rodoaneloeste.com.br/generic/home/ListOccurrences?abc&_=1524247552871')
+  unirest.get(rodoanelUrl)
   .headers({'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'})
   .end(function (response) {
     checkProblems(response.body);
@@ -25,7 +31,8 @@ function checkProblems(occurences) {
     {
       if (new Date().getDay() == 0 || new Date().getDay() == 6)
         return;
-      console.log("posting problem...");
+
+      console.log("posting problem: " + e.Text);
       unirest.post(hangoutsChatRoom)
         .headers({'Content-Type': 'application/json'})
         .send({ "text": e.Text})
