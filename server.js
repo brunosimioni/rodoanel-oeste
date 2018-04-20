@@ -26,7 +26,7 @@ function checkProblems(occurences) {
   console.log(events.length + " events happening...");
   for (var i in events) {
     var e = events[i];
-    console.log("analysing event " + i + " class: " + e.OccurrenceTypeCssClass);
+    console.log("analysing event " + i + " class: " + e.OccurrenceTypeCssClass + " Texto: " + e.Text);
     if (e.OccurrenceTypeCssClass != 'green' && e.OccurrenceTypeCssClass != 'yellow')
     {
       if (new Date().getDay() == 0 || new Date().getDay() == 6)
