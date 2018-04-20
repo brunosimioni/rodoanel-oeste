@@ -42,3 +42,10 @@ function checkProblems(occurences) {
     }
   }
 }
+
+
+
+var port = process.env.PORT || 8080;
+var express = require('express');
+var app = express();
+app.listen(port);
